@@ -80,5 +80,10 @@ Se utiliza MockAPI para simular backend:
 
 ---
 
+## 📽️ Link del video
+- https://drive.google.com/file/d/1_lfg69_4tIMmzJrkLVxT3d6qvFirWj1E/view?usp=sharing
+
+---
+
 ## 👨‍💻 Autor
 Edmilson Alejandro Martinez Reynosa - MR222768
