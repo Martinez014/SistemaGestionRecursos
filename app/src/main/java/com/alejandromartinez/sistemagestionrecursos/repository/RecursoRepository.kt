@@ -28,7 +28,6 @@ class RecursoRepository {
 
     suspend fun actualizarRating(recurso: Recurso, nuevoRating: Float) {
 
-        // NUEVO PROMEDIO SIMPLE (SIN COUNT)
         val promedio = (recurso.rating + nuevoRating) / 2f
 
         val actualizado = recurso.copy(
@@ -40,22 +39,5 @@ class RecursoRepository {
 
     suspend fun agregarUsuario(usuario: Usuario) {
         RetrofitClient.api.agregarUsuario(usuario)
-    }
-
-    suspend fun toggleFavorito(recurso: Recurso, userId: String) {
-
-        val lista = recurso.favoritos.toMutableList()
-
-        if (lista.contains(userId)) {
-            lista.remove(userId)
-        } else {
-            lista.add(userId)
-        }
-
-        val actualizado = recurso.copy(
-            favoritos = lista
-        )
-
-        RetrofitClient.api.editarRecurso(recurso.id, actualizado)
     }
 }

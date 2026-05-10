@@ -50,23 +50,14 @@ class RecursoAdapter(
         holder.txtDescripcion.text = recurso.descripcion
         holder.txtTipo.text = recurso.tipo
 
-        // =========================
-        // ⭐ RATING (1–10 LÓGICO, 1–5 VISUAL)
-        // =========================
-
         val rating10 = recurso.rating.coerceIn(0f, 10f)
-
         val ratingVisual = (rating10 / 2f).coerceIn(0f, 5f)
 
         holder.txtRating.text = "⭐ ${"%.1f".format(rating10)}/10"
 
-        // IMPORTANTE: evitar callback fantasma
         holder.ratingBar.setOnRatingBarChangeListener(null)
         holder.ratingBar.rating = ratingVisual
-
-        // =========================
-        // ROLES
-        // =========================
+        
 
         if (rol == "docente") {
 
@@ -78,10 +69,6 @@ class RecursoAdapter(
             holder.btnEliminar.visibility = View.GONE
             holder.btnFavorito.visibility = View.VISIBLE
         }
-
-        // =========================
-        // CLICK DOCENTE (EDITAR)
-        // =========================
 
         holder.itemView.setOnClickListener {
             if (rol == "docente") {
@@ -99,18 +86,12 @@ class RecursoAdapter(
                 holder.itemView.context.startActivity(intent)
             }
         }
-
-        // =========================
-        // ELIMINAR
-        // =========================
+        
 
         holder.btnEliminar.setOnClickListener {
             onEliminarClick(recurso)
         }
-
-        // =========================
-        // FAVORITOS
-        // =========================
+        
 
         holder.btnFavorito.setOnClickListener {
 
@@ -122,27 +103,35 @@ class RecursoAdapter(
             val userId = prefs.getString("id", "") ?: ""
             val key = "favoritos_$userId"
 
-            val favoritos = prefs.getStringSet(key, mutableSetOf())?.toMutableSet()
+            val favoritos = prefs.getStringSet(key, emptySet())?.toMutableSet()
                 ?: mutableSetOf()
 
             val recursoId = recurso.id.toString()
 
             if (favoritos.contains(recursoId)) {
+
                 favoritos.remove(recursoId)
-                Toast.makeText(holder.itemView.context, "Quitado de favoritos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Quitado de favoritos",
+                    Toast.LENGTH_SHORT
+                ).show()
+
             } else {
+
                 favoritos.add(recursoId)
-                Toast.makeText(holder.itemView.context, "Agregado a favoritos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Agregado a favoritos",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             prefs.edit().putStringSet(key, favoritos).apply()
-
+            
             onFavoritoClick(recurso)
         }
-
-        // =========================
-        // ⭐ RATING CHANGE (1–10)
-        // =========================
+        
 
         holder.ratingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
 

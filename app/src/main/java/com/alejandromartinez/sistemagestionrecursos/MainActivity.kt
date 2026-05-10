@@ -65,7 +65,6 @@ class MainActivity : ComponentActivity() {
             startActivity(Intent(this, FavoritosActivity::class.java))
         }
 
-        // 🔎 BÚSQUEDA EN TIEMPO REAL
         edtBuscar.addTextChangedListener(object : android.text.TextWatcher {
             override fun afterTextChanged(s: android.text.Editable?) {
                 filtrar(s.toString())
@@ -74,9 +73,8 @@ class MainActivity : ComponentActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // 🎛 FILTRO (ORDENAR)
         btnFiltro.setOnClickListener {
-            listaOriginal = listaOriginal.reversed() // simple toggle
+            listaOriginal = listaOriginal.reversed()
 
             adapter = RecursoAdapter(
                 listaOriginal,
@@ -93,14 +91,7 @@ class MainActivity : ComponentActivity() {
                         obtenerRecursos()
                     }
                 },
-                onFavoritoClick = { recurso ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val userId = sharedPreferences.getString("id", null)
-                        if (!userId.isNullOrEmpty()) {
-                            repository.toggleFavorito(recurso, userId)
-                        }
-                    }
-                }
+                onFavoritoClick = { }
             )
 
             recyclerView.adapter = adapter
@@ -127,7 +118,6 @@ class MainActivity : ComponentActivity() {
             try {
 
                 val recursos = repository.obtenerRecursos()
-
                 listaOriginal = recursos
 
                 withContext(Dispatchers.Main) {
@@ -141,27 +131,22 @@ class MainActivity : ComponentActivity() {
 
                             val builder = android.app.AlertDialog.Builder(this@MainActivity)
                             builder.setTitle("⚠️ Confirmación de eliminación")
-                            builder.setMessage("¿Estás seguro de que deseas eliminar el recurso \"${recurso.titulo}\"?\n\nEsta acción no se puede deshacer.")
+                            builder.setMessage("¿Estás seguro de eliminar \"${recurso.titulo}\"?")
 
                             builder.setPositiveButton("Sí, eliminar") { dialog, _ ->
 
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    try {
-                                        repository.eliminarRecurso(recurso.id)
+                                    repository.eliminarRecurso(recurso.id)
 
-                                        withContext(Dispatchers.Main) {
-                                            Toast.makeText(
-                                                this@MainActivity,
-                                                "Recurso eliminado correctamente",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
-
-                                        obtenerRecursos()
-
-                                    } catch (e: Exception) {
-                                        Log.e("DELETE_ERROR", e.message.toString())
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            "Recurso eliminado",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
+
+                                    obtenerRecursos()
                                 }
 
                                 dialog.dismiss()
@@ -171,7 +156,6 @@ class MainActivity : ComponentActivity() {
                                 dialog.dismiss()
                             }
 
-                            builder.setCancelable(true)
                             builder.show()
                         },
                         onRatingChange = { recurso, rating ->
@@ -181,15 +165,7 @@ class MainActivity : ComponentActivity() {
                                 obtenerRecursos()
                             }
                         },
-                        onFavoritoClick = { recurso ->
-
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val userId = sharedPreferences.getString("id", null)
-                                if (!userId.isNullOrEmpty()) {
-                                    repository.toggleFavorito(recurso, userId)
-                                }
-                            }
-                        }
+                        onFavoritoClick = { }
                     )
 
                     recyclerView.adapter = adapter
@@ -216,7 +192,7 @@ class MainActivity : ComponentActivity() {
             rol,
             onEliminarClick = { },
             onRatingChange = { _, _ -> },
-            onFavoritoClick = { }
+            onFavoritoClick = { } // 👈 IMPORTANTE
         )
     }
 }

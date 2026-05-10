@@ -41,7 +41,6 @@ class FavoritosActivity : ComponentActivity() {
 
                 val recursos = repo.obtenerRecursos()
 
-                // 🔥 FIX REAL: leer desde SharedPreferences (NO MockAPI)
                 val key = "favoritos_$userId"
                 val favoritosIds = prefs.getStringSet(key, emptySet()) ?: emptySet()
 
